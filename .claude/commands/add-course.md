@@ -28,8 +28,13 @@ rather than asking per assignment.
 
 ## 3. Write the course note
 
-Write `$VAULT/courses/<CODE>.md` following `templates/course.md`, with YAML frontmatter carrying
-`code`, `name`, `units`, `instructor`, and `estimate_bias: 1.0`.
+**If `$VAULT/courses/<CODE>.md` already exists, merge into it — never overwrite it.** Existing notes
+may already carry meeting times, locations, instructors, a tuned `estimate_bias`, and a calibration
+log that must survive. Fill in `TODO` fields and add what is new. If the syllabus contradicts an
+existing value, do not silently replace it — show the user both and ask which is right.
+
+Otherwise write a new note following `templates/course.md`, with YAML frontmatter carrying `code`,
+`name`, `units`, `instructor`, and `estimate_bias: 1.0`.
 
 Fill the workload notes from what the syllabus says about expected hours. If it says nothing, ask
 the user for a rough per-assignment estimate — this is what every future estimate for the course
@@ -38,10 +43,11 @@ anchors on, so it is worth one question.
 ## 4. Create tasks
 
 Append one task entry to `$VAULT/tasks/open.md` for every dated deliverable, IDs allocated
-monotonically. For each:
+monotonically. Check for duplicates first — if a task for this deliverable already exists, update it
+rather than adding a second. For each:
 
 - `type` from the deliverable kind
-- `due` as resolved above
+- `due` as resolved above; skip or shift anything landing on a blackout date in `semester.md`
 - `estimate` from the course's typical assignment size, scaled by the deliverable's grade weight —
   a 15% project is not the same size as a 3% problem set
 - `weight` from the grading table

@@ -38,6 +38,10 @@ What remains is **available time**. Everything downstream fits inside it.
 For each open task, remaining work is `estimate - spent`, multiplied by the course's `estimate_bias`
 if the estimate was originally yours rather than the user's.
 
+Include chores and errands from Reminders alongside coursework. A grocery run is real time and
+competes with a problem set for the same hours; leaving it out of the budget is how a week that
+looks feasible on paper falls apart on Wednesday.
+
 Sum the remaining work that must happen in this window — anything due inside the window, plus the
 share of longer-horizon work (projects, exam ramps) that this window should carry. Add each goal's
 weekly hour target from `goals.md`.
@@ -100,6 +104,32 @@ density:
 - **Day of the exam**: one short review block at most, ending 2 hours before the exam. Nothing else.
 
 Ramps are created as separate tasks (`type: exam`) so their hours are budgeted like any other work.
+
+## Location context
+
+Every task carries a `context`, and it is a hard placement constraint, not a preference. The user's
+day runs campus in the morning through to evening, then home to sleep, with a 20-minute walk each
+way. A block in the wrong place is a block that cannot happen.
+
+| context | Where it can go |
+|---|---|
+| `campus` | Only between the first and last campus obligation of a day. The default for coursework. |
+| `home` | Only after the walk home, or on a day with no campus trip. Never in a between-class gap. |
+| `errand` | Requires a trip out. Add travel time, and bundle multiple errands into one outing. Prefer the walk home or an already-free day. |
+| `anywhere` | No constraint. Reading, review, and recruiting calls usually qualify. |
+
+Rules:
+
+- **Never place a `home` task in a campus gap**, however convenient the hole in the calendar looks.
+  This is the most likely failure mode once chores enter the system.
+- **Never send the user home and back.** If a `home` task is the only thing left in an afternoon,
+  it waits for the evening rather than costing 40 minutes of walking.
+- **Bundle errands.** Two `errand` tasks in a week share one trip unless their deadlines forbid it.
+- **Chores with unattended intervals may overlap.** Laundry occupies the house but not the user's
+  attention: schedule a `home` work block across the wash and dry cycles rather than reserving the
+  full runtime exclusively. Say plainly in the report that they overlap on purpose.
+- Weekend days have no campus anchor, so `campus` tasks need a deliberate trip in — which costs 40
+  minutes round trip and should be weighed against doing the work at home instead.
 
 ## Persistent goals
 

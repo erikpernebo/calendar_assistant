@@ -54,7 +54,12 @@ If the remaining work no longer fits before the deadline under the buffer rules,
 not defer that discovery to the weekly replan. Offer the real options: start earlier tomorrow, cut a
 tier-2 goal, extend into the weekend, or accept that it will be tight.
 
-## 4. Report and commit
+## 4. Mirror to Reminders
+
+Update the affected task's reminder so the phone matches: revised hours remaining, and the next
+block's slice of the work. If the task is now done, complete its reminder. One `apply` call.
+
+## 5. Report and commit
 
 Report a short diff and nothing more:
 

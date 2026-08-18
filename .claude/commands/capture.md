@@ -49,7 +49,12 @@ in `state/calendar.json` — and report every move.
 
 If it does not need work this week, say so and note when work should start.
 
-## 5. Report and commit
+## 5. Mirror to Reminders
+
+Create the reminder for this task in its course list and record the returned `reminder_id`, per the
+Apple Reminders section of CLAUDE.md. One `apply` call.
+
+## 6. Report and commit
 
 Report a short diff: the task you created, the estimate and its source, blocks added with day and
 time, anything that moved to make room, and anything now at risk.
