@@ -30,7 +30,22 @@ details, or any other personal information into any file under this repository. 
 `templates/` use placeholders only (`<COURSE-CODE>`, `<GOAL>`). Every piece of user data goes to
 `$VAULT`.
 
-Before committing this repo, verify the diff contains nothing personal.
+Before committing or pushing this repo, run the audit. Do not rely on reading the diff — the two
+leaks that have actually happened here were a compiled `.pyc` with a home directory inside it and a
+reminder UUID used as an example, and neither was visible by eye.
+
+```
+./bin/privacy_audit.py
+```
+
+Exit 0 is clean, 1 is findings, **2 is unconfigured — which is a failure, not a pass.** The term list
+lives at `$VAULT/private-terms.txt`, because a list of the user's private terms cannot itself live in
+a public repo. Add every new course, organisation, and firm to it before first mentioning any of
+them.
+
+When a finding is real, replace the value with a **placeholder** (`<COURSE-CODE>`, `Acme`,
+`/path/to/vault`). Never redact by blanking a real value — an all-zero UUID reads as "a real one was
+here", which is a hint rather than a redaction.
 
 ### 2. Calendar write boundary
 
@@ -82,6 +97,7 @@ $VAULT/
   weeks/YYYY-Www.md    the plan for that week: budget table, placements, reasoning, retro
   log/YYYY-MM-DD.md    daily notes appended by /adjust
   state/calendar.json  event_id -> task_id for every block this agent owns
+  state/holds.json     meeting slots offered to someone outside the system, not yet resolved
 ```
 
 Read `templates/` in this repo for the shape of each file.
@@ -108,7 +124,7 @@ allocate the next one, scan both `tasks/open.md` and `tasks/done.md` for the hig
 - notes: needs the linked-list lecture first
 ```
 
-- `type`: `homework` | `exam` | `project` | `reading` | `goal` | `chore` | `errand`
+- `type`: `homework` | `exam` | `project` | `reading` | `goal` | `chore` | `errand` | `meeting`
 - `context`: `campus` | `home` | `errand` | `anywhere` — a hard placement constraint. See the
   scheduling skill.
 - `reminder_id`: the `x-apple-reminder://...` handle for this task's mirrored reminder, or absent if
@@ -138,6 +154,39 @@ rewrite it whole. Do not split it.
 Every event you create gets a row here immediately. Every event you delete loses its row in the same
 turn. This file is the sole record of what you are allowed to modify — if it and the calendar
 disagree, reconcile using the task ID in the event description before doing anything destructive.
+
+**state/holds.json**: slots offered to someone outside this system and awaiting their reply.
+
+```json
+{"holds": [
+  {"hold_id": "H-001", "group": "H-001", "label": "recruiter call",
+   "start": "2026-08-25T11:45:00-04:00", "end": "2026-08-25T12:15:00-04:00",
+   "created": "2026-08-18", "expires": "2026-08-23", "status": "offered"}
+]}
+```
+
+A hold with `status: offered` and an unexpired `expires` is **busy time for every command**, exactly
+as if it were booked. Offering the same slot to two people is the one failure in this system that
+cannot be fixed by rescheduling. `status` moves to `booked` or `released` when `/book` resolves the
+group; an expired hold stops blocking time but is reported at the next `/status`, never deleted
+silently.
+
+## Finding meeting times
+
+`bin/freetime.py` ranks candidate meeting slots by what each one costs to take. Its docstring defines
+the request and response shape. It does interval arithmetic only — which slots to offer and how to
+describe them is your judgment, informed by the `scheduling` skill.
+
+```
+./bin/freetime.py < request.json
+```
+
+Use it for any external scheduling request rather than reading a week of events and reasoning about
+the gaps. Overlap arithmetic across a dozen calendars and two weeks is where hand reasoning fails
+quietly, and a scheduling mistake here is one the user has to send an apologetic email about.
+
+Do not use the connector's `suggest_time`. It reads Google free/busy for an email address and knows
+nothing about commute, sleep, which blocks are yours to move, or where the user physically is.
 
 ## Apple Reminders
 

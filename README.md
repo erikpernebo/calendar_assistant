@@ -39,6 +39,8 @@ everything repeatable.
 | `bin/reminders.py` | Batched Apple Reminders bridge: `dump` and `apply`. Every operation goes through one `osascript` call, because the first Apple Event costs 20-30s of app wake-up while later ones cost ~1s. Ops are individually isolated so one failure cannot abort the batch. |
 | `bin/reconcile.py` | Three-way diff across Reminders, the vault, and the calendar. Reports facts only — new items, completions, due-date drift, conflicts, unscheduled work, calendar drift. Takes no actions. |
 | `bin/sync.py` | The driver. `status` = dump + reconcile in one wake-up. `push` = generate the plan, apply it, rewrite the snapshot. Idempotent: an unchanged task plans zero ops. |
+| `bin/freetime.py` | Ranks candidate meeting slots for an external scheduling request by what each one costs to take. Pure interval arithmetic; no network, no state. |
+| `bin/privacy_audit.py` | Checks the working tree, the index, and full git history for personal data before a push. Term list lives in the vault, not here. |
 
 Reminders **Sections and tags are not scriptable** — the dictionary exposes only `account`, `list`,
 and `reminder`, and a `#hashtag` written into a name stays literal text. Grouping is therefore done

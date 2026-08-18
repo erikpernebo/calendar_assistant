@@ -30,6 +30,9 @@ Then subtract, in this order:
 - quiet hours from `semester.md`
 - fixed weekly commitments from `semester.md`
 - meals and transitions if `semester.md` defines them
+- **active holds** from `state/holds.json` — time already offered to someone outside this system and
+  not yet resolved. A hold is as good as booked until it is released. Ignoring one means promising a
+  slot twice.
 
 What remains is **available time**. Everything downstream fits inside it.
 
@@ -194,6 +197,40 @@ Within the rules above, prefer:
   four tasks on the same day.
 - **Morning blocks for avoided work** — anything with `slips > 0`.
 - **Friday evening and Saturday left empty** unless a deadline forces it or the user asked otherwise.
+
+## External scheduling requests
+
+Someone outside the system asks for a meeting — a recruiter, a professor, a teammate. This is the
+one case where the schedule is negotiated rather than planned, and the rules invert: the meeting
+time is the constraint and everything else moves around it.
+
+`/find-time` proposes, `/book` commits. Between the two, the offered slots are **holds** and count as
+busy everywhere.
+
+### Displacement has a cost, not a veto
+
+Every commitment carries a cost in `semester.md` — what it costs the user to give it up. Nothing
+except sleep, dinner, and exams is absolutely immovable. A lecture can be missed. A recitation can be
+missed. A club event can be missed.
+
+The rule is not *don't displace*. The rule is **never displace silently**. Every slot is offered with
+its cost stated in plain words, every miss is written to the log and the week note, and a recurring
+commitment missed more than once in a month is surfaced as a pattern rather than absorbed.
+
+Order of preference, all else equal: empty time, then the agent's own work blocks, then a meal that
+can shift, then a goal block, then something attended, then something taught or led.
+
+### Work blocks are cheap to displace, but not free
+
+A displaced work block is only genuinely free if its hours re-fit before the deadline under every
+rule above. Check that before offering the slot, not after booking it. And prefer displacing a whole
+block to splitting one: a 90-minute block cut in half leaves two stubs too short to be worth the
+context switch, which is a real cost that looks like none.
+
+### Meetings are budgeted work
+
+A confirmed meeting becomes a task with `type: meeting`, so its time appears in the hour budget. A
+meeting that lives only on the calendar is time the scheduler still thinks it has.
 
 ## Reporting
 
