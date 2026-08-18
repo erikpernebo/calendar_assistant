@@ -42,6 +42,9 @@ Also add as busy:
   yet resolved. Cost `high`. Offering the same slot to two people is the one unrecoverable failure
   here.
 - **Sleep and wind-down** are not busy entries; they are the edges of `day_windows`.
+- **A discretionary lie-in** *is* a busy entry. On a day whose window opens later than the earliest
+  feasible wake, the gap between the two is a preference, not sleep — add it as
+  `cost: low, flex_min: 90`, labelled `lie-in`. See below.
 
 ## 3. Rank
 
@@ -49,6 +52,17 @@ Run `bin/freetime.py`, giving it the request on stdin. Its docstring defines the
 
 Set `day_windows` from the sleep table, starting each day **45 minutes after wake time** — nobody
 should take a recruiter call fifteen minutes after getting out of bed — and ending at wind-down.
+
+**Use the earliest *feasible* wake time, not the habitual one.** Bedtime is set by the next day's
+first obligation, so a late wake on a late-start day is a choice the user can unmake by going to bed
+earlier. Take the earliest wake time appearing anywhere in the sleep table, and model the difference
+as a `lie-in` busy entry (`cost: low`, `flex_min: 90`) covering the hours the user would otherwise
+have slept through. The 10-hour sleep block itself is never shortened — only moved.
+
+This matters because the alternative is silently deleting a whole morning. Treating the habitual
+wake as a hard edge turns every late-start day into ten unusable minutes, and the report then says
+"no time available" when the truth is "available, at the price of an earlier bedtime." That is a
+cost to state, not a slot to suppress — the same rule as any other displacement.
 
 Set `pad_before_min: 15` and `pad_after_min: 15`. The first is finding somewhere to talk and
 connecting; the second is overrun plus getting to whatever is next. On a day with back-to-back
