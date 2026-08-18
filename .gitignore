@@ -1,0 +1,6 @@
+# Local machine config — points at the private vault. Never commit.
+vault.local.json
+.claude/settings.local.json
+
+# OS noise
+.DS_Store
